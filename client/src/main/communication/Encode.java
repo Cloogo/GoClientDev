@@ -2,8 +2,6 @@ package src.main.communication;
 
 import com.google.gson.Gson;
 
-import com.google.gson.JsonObject;
-import com.sun.org.apache.regexp.internal.RE;
 import src.main.UserInfo;
 
 import java.util.HashMap;
