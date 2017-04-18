@@ -18,7 +18,7 @@ public class Encode {
         public int
                 CHECK_ACCOUNT = 0,
                 REGIST = 1,
-                LOGIN,
+                LOGIN = 2,
                 LOGOUT,
                 FETCH_PLAYER_INFO,
                 FETCH_LOBBY_INFO,
