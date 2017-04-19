@@ -18,7 +18,7 @@ public class Connect {
     public void send(String args) throws Exception {
         try {
             //1.建立客户端socket连接，指定服务器位置及端口
-            Socket socket =new Socket("192.168.43.7",6000);
+            Socket socket =new Socket("127.0.0.1",60000);
             //2.得到socket读写流
             OutputStream os=socket.getOutputStream();
             PrintWriter pw=new PrintWriter(os);
