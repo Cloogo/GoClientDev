@@ -1,7 +1,5 @@
 package src.main;
 
-import java.awt.Point;
-
 /**
  * Created by 刘俊延 on 2017/4/18.
  */
@@ -13,54 +11,50 @@ public class Stone {
 
     public int x;
     public int y;
-    public int type;
+    public int color;
 
     public Stone(int x, int y) {
         this.x = x;
         this.y = y;
-        this.type = this.None;
+        this.color = this.None;
     }
 
     public Stone(int x, int y, int t) {
         this.x = x;
         this.y = y;
-        this.type = t;
+        this.color = t;
     }
 
-    public int getType() {
-        return type;
+    public void setColor(int t) {
+        this.color = t;
     }
 
-    public void setType(int t) {
-        this.type = t;
-    }
-
-    public Stone up(){
-        if(y == 0){
+    public Stone up() {
+        if (y == 0) {
             return null;
         }
-        return Board.stones[x][y-1];
+        return Board.stones[x][y - 1];
     }
 
-    public Stone down(){
-        if(y == 18){
+    public Stone down() {
+        if (y == 18) {
             return null;
         }
-        return Board.stones[x][y+1];
+        return Board.stones[x][y + 1];
     }
 
-    public Stone left(){
-        if(x == 0){
+    public Stone left() {
+        if (x == 0) {
             return null;
         }
-        return Board.stones[x-1][y];
+        return Board.stones[x - 1][y];
     }
 
-    public Stone right(){
-        if(x == 18){
+    public Stone right() {
+        if (x == 18) {
             return null;
         }
-        return Board.stones[x+1][y];
+        return Board.stones[x + 1][y];
     }
 
 }
