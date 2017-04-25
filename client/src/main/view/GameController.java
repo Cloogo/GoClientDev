@@ -15,11 +15,10 @@ public class GameController implements Initializable {
 
     private Client client;
 
-    @FXML private ChessBox chessPaneController;
+    @FXML private ChessBoard chessPaneController;
     @FXML private TextField inputField;
     @FXML private Button sentBtn;
     @FXML private ListView<String> chatBox;
-    @FXML private Timer timeLabelController;
     @FXML private ChatBox chatBoxController;
 
     public void setClient(Client client){
@@ -31,13 +30,24 @@ public class GameController implements Initializable {
         chatBoxController.sentSentence(inputField.getText());
     }
 
+    @FXML
+    private void ready(){
+        chessPaneController.setReady(true);
+        // TODO: 向服务器发送准备信息
+    }
+
+    @FXML
+    private void surrender(){
+        // TODO: 向服务器发送认输信息
+    }
+
+    @FXML
+    private void judge(){
+        // TODO: 向服务器发送判子请求信息
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources){
-        chessPaneController.setTimer(timeLabelController);
 
-        chatBox.setLayoutX(602);
-        chatBox.setLayoutY(24);
-        chatBox.setPrefWidth(200);
-        chatBox.setPrefHeight(393);
     }
 }
