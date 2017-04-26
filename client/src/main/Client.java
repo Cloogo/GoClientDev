@@ -35,16 +35,9 @@ public class Client extends Application {
     private ArrayList playerList = new ArrayList();
 
     public Client() {
-<<<<<<< HEAD
     	//connect = new Connect();
     	lobbyStage = new Stage();
     	signupStage = new Stage();
-    	
-=======
-//        connect = new Connect();
-        lobbyStage = new Stage();
-        signupStage = new Stage();
->>>>>>> 9b90928b168352912aef7fea844b9a76bf4031c4
     }
 
     @Override
@@ -178,6 +171,6 @@ public class Client extends Application {
 
     public static void main(String[] args) {
         launch(args);
-    }
+   }
 
 }
