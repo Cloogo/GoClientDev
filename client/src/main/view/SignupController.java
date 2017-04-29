@@ -73,7 +73,6 @@ public class SignupController implements Initializable {
 
     @FXML
     private void signup() throws Exception {
-        /************* release *****************/
         signUpCall = true;
         synchronousCheck();
         signUpCall = false;
@@ -88,13 +87,6 @@ public class SignupController implements Initializable {
             user.setNickname(nn);
             user.setPassword(pw);
             user.setBirthday(year, month, day);
-            // Auto set.
-            /*if(male.isSelected()){
-                user.setSex(true);
-            }
-            else{
-                user.setSex(false);
-            }*/
             client.setAccount(user);
             String json = Encoder.signupRequest(user);
             System.out.println("user signup info: " + json);
@@ -107,7 +99,6 @@ public class SignupController implements Initializable {
                 JOptionPane.showMessageDialog(null, "服务器发生未知错误，请重试");
             }
         }
-        /************* release *****************/
     }
 
     // TODO: 检查账号格式：16个字符。若无效，设置 Lable 的文本并返回 false
@@ -232,11 +223,21 @@ public class SignupController implements Initializable {
     // TODO: 检查生日格式：月份天数是否正常。若无效，设置 Lable 的文本并返回 false
     @FXML
     private boolean checkDateOK() {
-        if (this.year.getValue() == null || this.month.getValue() == null || this.day.getValue() == null) {
-            setTipsError(dateFormatTips, "请选择择生日");
-            return false;
+        if (signUpCall) {
+            if (this.year.getValue() == null || this.month.getValue() == null || this.day.getValue() == null) {
+                setTipsError(dateFormatTips, "请选择择生日");
+                return false;
+            }
         }
-        setTipsOk(dateFormatTips);
+        if (this.year.getValue() != null && this.month.getValue() != null && this.day.getValue() != null) {
+            // TODO：日期合法判断
+            if (false) {
+                setTipsError(dateFormatTips, "日期无效");
+                return false;
+            }
+            setTipsOk(dateFormatTips);
+            return true;
+        }
         return true;
     }
 
@@ -295,12 +296,12 @@ public class SignupController implements Initializable {
     }
 
     @FXML
-    private void selectMale(){
+    private void selectMale() {
         user.setSex(true);
     }
 
     @FXML
-    private void selectFemale(){
+    private void selectFemale() {
         user.setSex(false);
     }
 
@@ -331,40 +332,6 @@ public class SignupController implements Initializable {
         female.setToggleGroup(tg);
         male.setSelected(true);
         selectMale();
-        //year.getSelectionModel().select(30);
-        //month.getSelectionModel().select(0);
-        //day.getSelectionModel().select(0);
-        /*account.textProperty().addListener(new ChangeListener<String>() {
-
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				// TODO Auto-generated method stub
-				 statusBarLabel.setText("状�?�：当前字符数为�?" + textField.getText().length());
-			}
-
-		});*/
-        /*textField.hoverProperty().addListener(new InvalidationListener() {
-            @Override
-        	public void invalidated(Observable observable) {
-        	if(textField.isHover()){
-        	textField.setText("textField listener added");
-        	}else{
-        	textField.setText("textField listener remove");
-        	}
-        	}
-        	});*/
-       /* account.hoverProperty().addListener(new InvalidationListener() {
-
-			@Override
-			public void invalidated(Observable observable) {
-				// TODO Auto-generated method stub
-				if(account.isHover()){
-					account.setText("textField listener added");
-					}else{
-					account.setText("textField listener remove");
-					}
-			}
-		});*/
         account.focusedProperty().addListener((arg0, oldPropertyValue, newPropertyValue) -> {
             if (newPropertyValue) {
 
