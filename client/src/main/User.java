@@ -1,7 +1,8 @@
 package src.main;
 
 import javafx.beans.property.SimpleStringProperty;
-//init
+import javafx.beans.property.StringProperty;
+
 public class User {
 
     class Birthday {
