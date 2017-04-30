@@ -5,19 +5,18 @@ import javafx.beans.property.StringProperty;
 
 public class User {
 
-    class Birthday {
+    private class Birthday {
         public int year;
         public int month;
         public int day;
     }
 
-    class GameData {
+    private class GameData {
         public int win;
         public int lose;
         public int draw;
         public int level;
         public int rank;
-
         public GameData() {
             win = 0;
             lose = 0;
@@ -25,19 +24,6 @@ public class User {
             level = 0;
             rank = 1000;
         }
-
-        public void setWin(int win) {
-            this.win = win;
-        }
-
-        public void setLose(int lose) {
-            this.lose = lose;
-        }
-
-        public void setLevel(int level) {
-            this.level = level;
-        }
-
     }
 
     private String account;
@@ -45,10 +31,11 @@ public class User {
     private String password;
     private Birthday birthday = new Birthday();
 
-    boolean sex;  // true for man, false for woman
-    int state;
-    int room;
-    GameData data = new GameData();
+    private boolean sex;  // true for man, false for woman
+    private int state;
+    private int room;
+    private GameData data = new GameData();
+
     private static String[] level = {"十八级", "十七级", "十六级", "十五级", "十四级", "十三级", "十二级", "十一级", "十级"
             , "九级", "八级", "七级", "六级", "五级", "四级", "三级", "二级", "一级",
             "一段", "二段", "三段", "四段", "五段", "六段", "七段", "八段", "九段"};
@@ -60,9 +47,9 @@ public class User {
 
     public User(String nickname, int level, int win, int lose, int state) {
         this.nickname = nickname;
-        data.setLevel(level);
-        data.setWin(win);
-        data.setLose(lose);
+        this.data.level = level;
+        this.data.win  =win;
+        this.data.lose = lose;
         this.state = state;
     }
 
@@ -115,6 +102,12 @@ public class User {
     public int getLevel() {
         return this.data.level;
     }
+
+    public int getRank() {return this.data.rank;}
+
+    public int getWins() {return this.data.win;}
+
+    public int getLoses() {return this.data.lose;}
 
     public StringProperty getLevelProperty() {
         return new SimpleStringProperty(level[this.data.level]);
