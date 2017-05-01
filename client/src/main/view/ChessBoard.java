@@ -2,13 +2,17 @@ package src.main.view;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import src.main.Board;
+import src.main.Client;
 import src.main.Stone;
 import src.main.Type;
 import src.main.communication.Encoder;
@@ -20,11 +24,11 @@ import java.util.ResourceBundle;
 
 public class ChessBoard implements Initializable {
 
-    private static boolean ready;
-    private Timer player1timer;
-    private Timer player2timer;
+    private Timer player1TimerController;
+    private Timer player2TimerController;
     private Board board = new Board();
     private Circle[][] stonesCircle = new Circle[19][19];
+    private Label[][] steps = new Label[19][19];
     private int color = -1;
 
     @FXML
@@ -34,37 +38,35 @@ public class ChessBoard implements Initializable {
     private static final int stoneGap = 32;
     private static final int xLen = 18 * stoneGap + 2 * borderGap;
     private static final int yLen = 18 * stoneGap + 2 * borderGap;
-    private static final int stoneRadius = (stoneGap - 4) / 2;
+    private static final int stoneRadius = (stoneGap - 2) / 2;
 
     private Point pixel = new Point();
     private Point index = new Point();
 
     @FXML
     private void onClick(MouseEvent event) {
-        /*********** test ***********/
-        if(color==-1){
-            player1timer.pause();
-            player2timer.start();
-        }else{
-            player2timer.pause();
-            player1timer.start();
-        }
-        /*********** test ***********/
-        getPixelPos(event);
-        int action = action();
-        if (action != Type.Action.INVALID) {
-            String jsonmsg = Encoder.actionRequest(action, color, index.x, index.y);
-            System.out.println(jsonmsg);
-            if (action == Type.Action.KILL) {
-                place(index.x, index.y, color);
-                for (int chain : Board.dead) {
-                    remove(chain);
-                }
-                board.remove();
+        if (GameController.isBegin()/* && GameController.getTurn() == color*/) {
+            /*********** test ***********/
+            if (color == -1) {
+                player1TimerController.pause();
+                player2TimerController.start();
             } else {
-                place(index.x, index.y, color);
+                player2TimerController.pause();
+                player1TimerController.start();
             }
-            color = -color;
+            /*********** test ***********/
+            getPixelPos(event);
+            int action = action();
+            if (action != Type.Action.INVALID) {
+                String jsonmsg = Encoder.actionRequest(action, color, index.x, index.y);
+                System.out.println(jsonmsg);
+                place(index.x, index.y, color);
+                if (action == Type.Action.KILL) {
+                    remove();
+                    board.remove();
+                }
+                color = -color;
+            }
         }
     }
 
@@ -104,43 +106,86 @@ public class ChessBoard implements Initializable {
         return board.action(index, color);
     }
 
-    private void place(int x, int y, int color) {
+    public void place(int x, int y, int color) {
         Circle stone = stonesCircle[x][y];
+        Label step = steps[x][y];
         System.out.println("ChessBoard Place: (" + x + "," + y + ")");
         if (color == Stone.Black) {
             stone.setFill(Color.BLACK);
+            step.setTextFill(Color.WHITE);
         } else {
-            stone.setFill(Color.WHITE);
+            stone.setFill(Color.color(0.97, 0.97, 0.97));
+            step.setTextFill(Color.BLACK);
         }
         stone.setLayoutX(pixel.x);
         stone.setLayoutY(pixel.y);
         stone.setRadius(stoneRadius);
         chessPane.getChildren().add(stone);
-        board.add(x, y, this.color);
-    }
-
-    private void remove(int chain) {
-        HashSet<Stone> stones = Board.stonesMap.get(chain);
-        System.out.print("ChessBoard remove chain " + chain + " : ");
-        for (Stone s : stones) {
-            System.out.print("Stone(" + s.x + "," + s.y + ") ");
-            chessPane.getChildren().remove(stonesCircle[s.x][s.y]);
+        board.add(x, y, color);
+        step.setText(Integer.toString(Board.stones[x][y].step));
+        step.setPrefSize(20, 10);
+        step.setLayoutX(pixel.x - 10);
+        step.setLayoutY(pixel.y - 7);
+        step.setAlignment(Pos.BASELINE_CENTER);
+        if (Client.getGameController().isShowStep()) {
+            chessPane.getChildren().add(step);
         }
-        System.out.println();
     }
 
+    public void remove() {
+        for (int chain : Board.dead) {
+            HashSet<Stone> stones = Board.stonesMap.get(chain);
+            System.out.print("ChessBoard remove chain " + chain + " : ");
+            for (Stone s : stones) {
+                System.out.print("Stone(" + s.x + "," + s.y + ") ");
+                chessPane.getChildren().remove(stonesCircle[s.x][s.y]);
+                if (Client.getGameController().isShowStep()) {
+                    chessPane.getChildren().remove(steps[s.x][s.y]);
+                }
+            }
+            System.out.println();
+        }
+    }
 
-    public void setReady(boolean ready) {
-        this.ready = ready;
+    public void showStep() {
+        for (int i = 0; i < 19; ++i) {
+            for (int j = 0; j < 19; ++j) {
+                if (Board.stones[i][j].color != Stone.None) {
+                    chessPane.getChildren().add(steps[i][j]);
+                }
+            }
+        }
+    }
+
+    public void hideStep() {
+        for (int i = 0; i < 19; ++i) {
+            for (int j = 0; j < 19; ++j) {
+                if (Board.stones[i][j].color != Stone.None) {
+                    chessPane.getChildren().remove(steps[i][j]);
+                }
+            }
+        }
     }
 
     public void setTimer(Timer timer01, Timer timer02) {
-        this.player1timer = timer01;
-        this.player2timer = timer02;
+        this.player1TimerController = timer01;
+        this.player2TimerController = timer02;
     }
 
     public void setColor(int color) {
         this.color = color;
+    }
+
+    public void clear() {
+        for (int i = 0; i < 19; ++i) {
+            for (int j = 0; j < 19; ++j) {
+                if (Board.stones[i][j].color != Stone.None) {
+                    chessPane.getChildren().remove(stonesCircle[i][j]);
+                    chessPane.getChildren().remove(steps[i][j]);
+                }
+            }
+        }
+        board.clear();
     }
 
     @Override
@@ -149,7 +194,7 @@ public class ChessBoard implements Initializable {
         drawLine();
         drawStar();
         initStonesCircle();
-        ready = false;
+        initStepsLable();
     }
 
     private void drawBoard() {
@@ -198,4 +243,11 @@ public class ChessBoard implements Initializable {
         }
     }
 
+    private void initStepsLable() {
+        for (int i = 0; i < 19; ++i) {
+            for (int j = 0; j < 19; ++j) {
+                steps[i][j] = new Label();
+            }
+        }
+    }
 }

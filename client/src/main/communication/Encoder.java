@@ -1,6 +1,8 @@
 package src.main.communication;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import src.main.*;
 
 import java.util.ArrayList;
@@ -28,10 +30,10 @@ public class Encoder {
         return requestJson(gson.toJson(map), Type.Request.LOGIN);
     }
 
-    public static String logoutRequest(User user){
+    public static String logoutRequest(User user) {
         Map map = new HashMap();
-        map.put("account",user.getAccount());
-        return requestJson(gson.toJson(map),Type.Request.LOGOUT);
+        map.put("account", user.getAccount());
+        return requestJson(gson.toJson(map), Type.Request.LOGOUT);
     }
 
     public static String fetchRoomsRequest() {
@@ -42,37 +44,44 @@ public class Encoder {
         return "{\"request_type\":" + String.valueOf(Type.Request.FETCH_PLAYERS_INFO) + "}";
     }
 
-    public static String updateRoomRequest(){
-        // TODO
-        return "";
+    public static String updateRoomRequest(Room room, int type) {
+        JSONObject jsonObject = JSONObject.parseObject(gson.toJson(room).toString());
+        jsonObject.put("action", type);
+        return requestJson(gson.toJson(jsonObject), Type.Request.SITDOWN);
     }
 
-    public static String readyRequest(Room room, Boolean player1IsReady, Boolean player2IsReady){
+    public static String readyRequest(Room room, Boolean player1IsReady, Boolean player2IsReady) {
         Map map = new HashMap();
-        map.put("room_id",room.getId());
-        map.put("player1",player1IsReady);
-        map.put("player2",player2IsReady);
-        return requestJson(gson.toJson(map),Type.Request.READY);
+        map.put("room_id", room.getId());
+        map.put("player1", player1IsReady);
+        map.put("player2", player2IsReady);
+        return requestJson(gson.toJson(map), Type.Request.READY);
     }
 
-    public static String surrenderRequest(Room room, String player){
+    public static String surrenderRequest(Room room, String player) {
         Map map = new HashMap();
-        map.put("room_id",room.getId());
-        map.put("player",player);
-        return requestJson(gson.toJson(map),Type.Request.GAMERESULT);
+        map.put("room_id", room.getId());
+        map.put("player", player);
+        return requestJson(gson.toJson(map), Type.Request.GAMERESULT);
+    }
+
+    public static String judgeRequest(Room room, String player) {
+        Map map = new HashMap();
+        map.put("room_id", room.getId());
+        map.put("player", player);
+        return requestJson(gson.toJson(map), Type.Request.JUDGE);
     }
 
     public static String actionRequest(int action, int color, int x, int y) {
         Map map = new HashMap();
+        map.put("action", action);
         if (action == Type.Action.PLACE) {
-            map.put("action", "place");
             Map placeMap = new HashMap();
             placeMap.put("x", x);
             placeMap.put("y", y);
             placeMap.put("color", color);
             map.put("place", placeMap);
         } else if (action == Type.Action.KILL) {
-            map.put("action", "kill");
             Map placeMap = new HashMap();
             placeMap.put("x", x);
             placeMap.put("y", y);
